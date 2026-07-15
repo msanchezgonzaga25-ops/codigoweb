@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zoo de Palabras — Aprende animales en inglés</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFF7E6;
+    --pink:#FF6FA0;
+    --pink-dark:#E8447F;
+    --blue:#31C4E8;
+    --blue-dark:#159FC1;
+    --yellow:#FFC83D;
+    --yellow-dark:#F2A80C;
+    --green:#5AC85A;
+    --green-dark:#39A83E;
+    --purple:#9C6BF0;
+    --purple-dark:#7B45D6;
+    --ink:#2E2A4D;
+    --card:#FFFFFF;
+    --radius:28px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 8% 12%, rgba(255,111,160,.28), transparent 40%),
+      radial-gradient(circle at 92% 18%, rgba(49,196,232,.28), transparent 42%),
+      radial-gradient(circle at 15% 88%, rgba(255,200,61,.3), transparent 40%),
+      radial-gradient(circle at 90% 85%, rgba(156,107,240,.25), transparent 42%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Nunito', sans-serif;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    margin:0;
+  }
+  button{font-family:inherit;}
+
+  /* ===== HEADER ===== */
+  header{
+    text-align:center;
+    padding:34px 20px 20px;
+  }
+  .title-row{
+    display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;
+  }
+  .title-row .emoji-badge{
+    font-size:46px;
+    animation:wiggle 3.5s ease-in-out infinite;
+  }
+  header h1{
+    font-size:clamp(30px,5vw,46px);
+    color:var(--purple-dark);
+    text-shadow:3px 3px 0 rgba(255,255,255,.7);
+  }
+  header p{
+    margin-top:10px;font-size:17px;color:var(--ink);opacity:.75;font-weight:600;
+  }
+  @keyframes wiggle{
+    0%,100%{transform:rotate(-8deg);}
+    50%{transform:rotate(8deg);}
+  }
+
+  /* ===== MODE SWITCH ===== */
+  .mode-switch{
+    display:flex;justify-content:center;gap:12px;margin:22px auto 6px;
+    padding:6px;background:rgba(255,255,255,.6);border-radius:100px;
+    width:fit-content;
+  }
+  .mode-btn{
+    border:none;background:transparent;padding:12px 26px;border-radius:100px;
+    font-family:'Baloo 2',sans-serif;font-size:16px;font-weight:600;
+    color:var(--ink);cursor:pointer;transition:.25s;
+  }
+  .mode-btn.active{
+    background:var(--purple);color:#fff;
+    box-shadow:0 8px 18px -6px rgba(156,107,240,.6);
+  }
+
+  main{max-width:980px;margin:0 auto;padding:20px 20px 60px;}
+
+  /* ===== LEARN MODE: FLASHCARD ===== */
+  .stage{
+    display:flex;align-items:center;justify-content:center;gap:18px;
+    margin-top:20px;
+  }
+  .arrow-btn{
+    width:56px;height:56px;border-radius:50%;border:none;
+    background:var(--card);box-shadow:0 8px 20px -8px rgba(46,42,77,.3);
+    font-size:24px;cursor:pointer;flex-shrink:0;color:var(--purple-dark);
+    transition:.2s;
+  }
+  .arrow-btn:hover{transform:scale(1.1);}
+  .arrow-btn:active{transform:scale(0.95);}
+
+  .flashcard{
+    background:var(--card);
+    border-radius:var(--radius);
+    width:100%;max-width:420px;
+    padding:36px 28px 30px;
+    text-align:center;
+    box-shadow:0 20px 40px -18px rgba(46,42,77,.35);
+    position:relative;
+    transition:transform .25s ease;
+  }
+  .flashcard.pop{animation:pop .4s ease;}
+  @keyframes pop{
+    0%{transform:scale(0.85) rotate(-2deg);}
+    60%{transform:scale(1.05) rotate(1deg);}
+    100%{transform:scale(1) rotate(0);}
+  }
+  .card-emoji{
+    font-size:110px;line-height:1;
+    filter:drop-shadow(0 10px 14px rgba(0,0,0,.12));
+  }
+  .card-en{
+    margin-top:18px;font-size:38px;color:var(--pink-dark);letter-spacing:.01em;
+  }
+  .card-es{
+    margin-top:4px;font-size:16px;color:var(--ink);opacity:.6;font-weight:700;
+    text-transform:capitalize;
+  }
+  .speak-btn{
+    margin-top:20px;
+    background:var(--yellow);
+    border:none;border-radius:100px;
+    padding:12px 26px;
+    font-family:'Baloo 2',sans-serif;font-weight:600;font-size:16px;
+    color:#5C3B00;cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;
+    box-shadow:0 8px 18px -8px rgba(242,168,12,.7);
+    transition:.2s;
+  }
+  .speak-btn:hover{background:var(--yellow-dark);transform:translateY(-2px);}
+  .progress-dots{
+    display:flex;justify-content:center;gap:6px;margin-top:22px;flex-wrap:wrap;max-width:280px;margin-left:auto;margin-right:auto;
+  }
+  .progress-dots span{
+    width:9px;height:9px;border-radius:50%;background:#E5DEF5;
+  }
+  .progress-dots span.on{background:var(--purple);}
+
+  /* ===== ANIMAL GRID ===== */
+  .grid-title{
+    text-align:center;margin-top:52px;font-size:22px;color:var(--blue-dark);
+  }
+  .animal-grid{
+    display:grid;grid-template-columns:repeat(6,1fr);gap:14px;
+    margin-top:22px;
+  }
+  .mini-card{
+    background:var(--card);border-radius:18px;padding:14px 8px;
+    text-align:center;cursor:pointer;border:3px solid transparent;
+    transition:.2s;
+  }
+  .mini-card:hover{transform:translateY(-3px);box-shadow:0 10px 18px -10px rgba(46,42,77,.3);}
+  .mini-card.current{border-color:var(--pink);background:#FFF0F5;}
+  .mini-card .em{font-size:34px;}
+  .mini-card .nm{font-size:12px;font-weight:700;margin-top:4px;color:var(--ink);opacity:.75;}
+
+  /* ===== QUIZ MODE ===== */
+  .quiz-wrap{text-align:center;}
+  .score-row{
+    display:flex;justify-content:center;gap:26px;margin-bottom:18px;flex-wrap:wrap;
+  }
+  .score-pill{
+    background:var(--card);border-radius:100px;padding:10px 22px;
+    font-family:'Baloo 2',sans-serif;font-weight:600;font-size:15px;
+    box-shadow:0 6px 14px -8px rgba(46,42,77,.3);
+    display:flex;align-items:center;gap:8px;
+  }
+  .quiz-prompt{font-size:19px;font-weight:800;color:var(--purple-dark);margin-bottom:10px;}
+  .quiz-emoji{
+    font-size:130px;margin:18px 0;
+    filter:drop-shadow(0 14px 16px rgba(0,0,0,.15));
+    animation:float 3s ease-in-out infinite;
+  }
+  @keyframes float{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-10px);}
+  }
+  .options{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:16px;
+    max-width:480px;margin:24px auto 0;
+  }
+  .opt-btn{
+    background:var(--card);border:3px solid #ECE6FB;border-radius:18px;
+    padding:18px 10px;font-family:'Baloo 2',sans-serif;font-size:19px;font-weight:600;
+    color:var(--ink);cursor:pointer;transition:.15s;
+  }
+  .opt-btn:hover{border-color:var(--blue);transform:translateY(-2px);}
+  .opt-btn.correct{background:var(--green);border-color:var(--green-dark);color:#fff;}
+  .opt-btn.wrong{background:var(--pink);border-color:var(--pink-dark);color:#fff;}
+  .opt-btn:disabled{cursor:default;}
+  .feedback{
+    margin-top:20px;font-size:20px;font-weight:800;min-height:30px;
+  }
+  .feedback.good{color:var(--green-dark);}
+  .feedback.bad{color:var(--pink-dark);}
+  .next-hint{font-size:14px;opacity:.6;margin-top:6px;font-weight:700;}
+
+  .hidden{display:none !important;}
+
+  footer{
+    text-align:center;padding:30px 20px 40px;font-size:13.5px;color:var(--ink);opacity:.55;font-weight:700;
+  }
+
+  @media (max-width:760px){
+    .animal-grid{grid-template-columns:repeat(4,1fr);}
+    .options{grid-template-columns:1fr;}
+  }
+  @media (max-width:480px){
+    .animal-grid{grid-template-columns:repeat(3,1fr);}
+    .arrow-btn{width:44px;height:44px;font-size:18px;}
+    .card-emoji{font-size:88px;}
+    .card-en{font-size:30px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-row">
+    <span class="emoji-badge">🦁</span>
+    <h1>Zoo de Palabras</h1>
+    <span class="emoji-badge" style="animation-delay:1.2s;">🐵</span>
+  </div>
+  <p>Aprende los nombres de los animales en inglés, ¡jugando!</p>
+</header>
+
+<div class="mode-switch">
+  <button class="mode-btn active" id="btn-learn" onclick="setMode('learn')">📖 Aprender</button>
+  <button class="mode-btn" id="btn-quiz" onclick="setMode('quiz')">🎯 Jugar</button>
+</div>
+
+<main>
+  <!-- LEARN MODE -->
+  <section id="learn-mode">
+    <div class="stage">
+      <button class="arrow-btn" onclick="prevAnimal()" aria-label="Anterior">←</button>
+      <div class="flashcard" id="flashcard">
+        <div class="card-emoji" id="card-emoji">🐶</div>
+        <h2 class="card-en" id="card-en">Dog</h2>
+        <div class="card-es" id="card-es">perro</div>
+        <button class="speak-btn" onclick="speakCurrent()">🔊 Escuchar</button>
+        <div class="progress-dots" id="progress-dots"></div>
+      </div>
+      <button class="arrow-btn" onclick="nextAnimal()" aria-label="Siguiente">→</button>
+    </div>
+
+    <h3 class="grid-title">Todos los animales</h3>
+    <div class="animal-grid" id="animal-grid"></div>
+  </section>
+
+  <!-- QUIZ MODE -->
+  <section id="quiz-mode" class="hidden quiz-wrap">
+    <div class="score-row">
+      <div class="score-pill">⭐ Aciertos: <span id="score-correct">0</span></div>
+      <div class="score-pill">🔁 Ronda: <span id="score-round">1</span></div>
+    </div>
+    <div class="quiz-prompt">¿Cómo se dice este animal en inglés?</div>
+    <div class="quiz-emoji" id="quiz-emoji">🐘</div>
+    <div class="options" id="quiz-options"></div>
+    <div class="feedback" id="quiz-feedback"></div>
+  </section>
+</main>
+
+<footer>Hecho con 💛 para pequeños exploradores curiosos</footer>
+
+<script>
+  const animals = [
+    {en:"Dog", es:"perro", emoji:"🐶"},
+    {en:"Cat", es:"gato", emoji:"🐱"},
+    {en:"Lion", es:"león", emoji:"🦁"},
+    {en:"Elephant", es:"elefante", emoji:"🐘"},
+    {en:"Giraffe", es:"jirafa", emoji:"🦒"},
+    {en:"Monkey", es:"mono", emoji:"🐵"},
+    {en:"Zebra", es:"cebra", emoji:"🦓"},
+    {en:"Tiger", es:"tigre", emoji:"🐯"},
+    {en:"Bear", es:"oso", emoji:"🐻"},
+    {en:"Rabbit", es:"conejo", emoji:"🐰"},
+    {en:"Duck", es:"pato", emoji:"🦆"},
+    {en:"Cow", es:"vaca", emoji:"🐮"},
+    {en:"Horse", es:"caballo", emoji:"🐴"},
+    {en:"Fish", es:"pez", emoji:"🐟"},
+    {en:"Frog", es:"rana", emoji:"🐸"},
+    {en:"Owl", es:"búho", emoji:"🦉"},
+    {en:"Penguin", es:"pingüino", emoji:"🐧"},
+    {en:"Turtle", es:"tortuga", emoji:"🐢"}
+  ];
+
+  let current = 0;
+
+  function speak(text){
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
+    u.rate = 0.85;
+    u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  }
+  function speakCurrent(){
+    speak(animals[current].en);
+  }
+
+  function renderFlashcard(animate=false){
+    const a = animals[current];
+    document.getElementById("card-emoji").textContent = a.emoji;
+    document.getElementById("card-en").textContent = a.en;
+    document.getElementById("card-es").textContent = a.es;
+    const card = document.getElementById("flashcard");
+    if(animate){
+      card.classList.remove("pop");
+      void card.offsetWidth;
+      card.classList.add("pop");
+    }
+    renderDots();
+    highlightMiniCard();
+  }
+
+  function renderDots(){
+    const wrap = document.getElementById("progress-dots");
+    wrap.innerHTML = animals.map((_,i)=>`<span class="${i===current?'on':''}"></span>`).join("");
+  }
+
+  function renderGrid(){
+    const grid = document.getElementById("animal-grid");
+    grid.innerHTML = animals.map((a,i)=>`
+      <div class="mini-card ${i===current?'current':''}" data-i="${i}" onclick="goTo(${i})">
+        <div class="em">${a.emoji}</div>
+        <div class="nm">${a.en}</div>
+      </div>
+    `).join("");
+  }
+
+  function highlightMiniCard(){
+    document.querySelectorAll(".mini-card").forEach((el,i)=>{
+      el.classList.toggle("current", i===current);
+    });
+  }
+
+  function goTo(i){
+    current = i;
+    renderFlashcard(true);
+    speakCurrent();
+  }
+  function nextAnimal(){
+    current = (current + 1) % animals.length;
+    renderFlashcard(true);
+    speakCurrent();
+  }
+  function prevAnimal(){
+    current = (current - 1 + animals.length) % animals.length;
+    renderFlashcard(true);
+    speakCurrent();
+  }
+
+  // ===== MODE SWITCH =====
+  function setMode(mode){
+    document.getElementById("learn-mode").classList.toggle("hidden", mode !== "learn");
+    document.getElementById("quiz-mode").classList.toggle("hidden", mode !== "quiz");
+    document.getElementById("btn-learn").classList.toggle("active", mode === "learn");
+    document.getElementById("btn-quiz").classList.toggle("active", mode === "quiz");
+    if(mode === "quiz") newQuizRound();
+  }
+
+  // ===== QUIZ MODE =====
+  let score = 0, round = 1, quizAnswer = null, locked = false;
+
+  function shuffle(arr){
+    const a = [...arr];
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+  function newQuizRound(){
+    locked = false;
+    document.getElementById("quiz-feedback").textContent = "";
+    document.getElementById("quiz-feedback").className = "feedback";
+
+    const correct = animals[Math.floor(Math.random()*animals.length)];
+    quizAnswer = correct;
+    document.getElementById("quiz-emoji").textContent = correct.emoji;
+
+    const wrongs = shuffle(animals.filter(a=>a.en !== correct.en)).slice(0,3);
+    const options = shuffle([correct, ...wrongs]);
+
+    const optWrap = document.getElementById("quiz-options");
+    optWrap.innerHTML = options.map(o=>`
+      <button class="opt-btn" onclick="checkAnswer(this,'${o.en}')">${o.en}</button>
+    `).join("");
+
+    document.getElementById("score-round").textContent = round;
+    speak(correct.en);
+  }
+
+  function checkAnswer(btn, chosen){
+    if(locked) return;
+    locked = true;
+    const feedback = document.getElementById("quiz-feedback");
+    const buttons = document.querySelectorAll(".opt-btn");
+
+    if(chosen === quizAnswer.en){
+      btn.classList.add("correct");
+      feedback.textContent = "¡Correcto! 🎉 " + quizAnswer.en + " es \"" + quizAnswer.es + "\"";
+      feedback.className = "feedback good";
+      score++;
+      document.getElementById("score-correct").textContent = score;
+    } else {
+      btn.classList.add("wrong");
+      buttons.forEach(b=>{
+        if(b.textContent === quizAnswer.en) b.classList.add("correct");
+      });
+      feedback.textContent = "¡Casi! Era " + quizAnswer.en + " (" + quizAnswer.es + ") — ¡tú puedes! 💪";
+      feedback.className = "feedback bad";
+    }
+    buttons.forEach(b=>b.disabled = true);
+    round++;
+    setTimeout(newQuizRound, 2200);
+  }
+
+  // init
+  renderFlashcard();
+  renderGrid();
+</script>
+
+</body>
+</html>
